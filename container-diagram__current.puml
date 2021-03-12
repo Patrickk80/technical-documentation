@@ -1,0 +1,58 @@
+@startuml
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include FONTAWESOME/users.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+AddTagSupport("target", $fontColor="#fff", $bgColor="#b35806")
+
+Person(storeCommunicationUser, "Medewerker winkelcommunicatie", "Verantwoordelijk voor relevante winkelcommunicatie")
+Person(businessUser, "Hoofdkantoormedewerker", "Heeft communicatiebehoefte naar de winkels", "users")
+Person(storeUser, "Winkelmedewerker", "Wil alleen relevante communicatie ontvangen" ,"users")
+
+System_Boundary(communication, "Winkelcommunicatie") {
+    Boundary(jumboEnv, "Jumbo", "Jumbo beheerde omgeving") {
+
+        Boundary(sharePoint, "JumboNet", "SharePoint") {
+            Container(storePage, "Winkelpagina", "Collectie van 1 pagina per winkel")
+            Container(managementPage, "Winkelberichten beheer", "Beheerpagina voor het indienen van berichten")
+        }
+
+        Boundary(azure, "Kubernetes", "Azure") {
+            Container(messageService, "Berichtenservice", "Verantwoordelijk voor het publiceren van winkelberichten")
+            Container(storeSelector, "Winkelselector", "Service die helpt bij het selecteren van een (collectie) winkel(s)")
+        }
+
+        Container_Ext(ad, "Active Directory", "Beheer van autorisaties")
+    }
+
+
+    Boundary(simacEnv, "Simac", "Simac beheerde omgeving") {
+        Container(MDTMessageService, "MDT Berichtenservice", "Verantwoordelijk voor het publiceren van MDT winkelberichten")
+    }
+
+    Container_Ext(mdt, "MDT", "Excel applicatie", $tags="target")
+}
+
+Lay_L(storeCommunicationUser, businessUser)
+
+Lay_D(sharePoint, azure)
+Lay_R(ad, storeSelector)
+
+Rel(businessUser, managementPage, "Dient generieke berichten in")
+Rel_D(storeCommunicationUser, managementPage, "Beoordeelt ingediende berichten")
+Lay_U(managementPage, storeCommunicationUser)
+
+Rel(storeCommunicationUser, mdt, "Creëert winkel specifieke berichten")
+Rel(mdt, MDTMessageService, "gebruikt", "soap")
+Rel(MDTMessageService, storePage, "Publiceert bericht op de betreffende pagina")
+
+Rel_L(storeUser, storePage, "ontvangt communicatie")
+
+Rel(messageService, managementPage, "Haalt berichten op die gepubliceert moeten worden")
+Rel(messageService, storePage, "Publiceert berichten op de betreffende pagina's")
+
+Rel(managementPage, storeSelector, "Gebruikt")
+Rel(managementPage, ad, "Gebruikt")
+
+SHOW_DYNAMIC_LEGEND()
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include FONTAWESOME/users.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(businessUser, "Hoofdkantoormedewerker", "Heeft communicatiebehoefte naar de winkels", "users")
+Person(storeCommunicationUser, "Medewerker winkelcommunicatie", "Verantwoordelijk voor relevante winkelcommunicatie")
+Person(storeUser, "Winkelmedewerker", "Wil alleen relevante communicatie ontvangen" ,"users")
+
+Boundary(boundary, "Winkelcommunicatie", "Intern") {
+    System(jumboNet, "JumboNet", "Intranet based on SharePoint")
+    System(mdt, "MDT", "Excel applicatie")
+}
+
+Rel_D(businessUser,jumboNet, "Dient generieke berichten in")
+Rel(storeCommunicationUser, jumboNet, "Beoordeelt ingediende berichten")
+Rel(storeCommunicationUser, mdt, "Creëert winkel specifieke berichten")
+Rel_R(mdt, jumboNet, "publiceert winkelspecifieke communicatie", "soap")
+Rel_U(storeUser, jumboNet, "ontvangt communicatie")
+
+LAYOUT_LEFT_RIGHT()
+SHOW_DYNAMIC_LEGEND()
+
+@enduml
