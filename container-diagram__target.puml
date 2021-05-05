@@ -4,6 +4,7 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 AddElementTag("target", $fontColor="#fff", $bgColor="#b35806")
+skinparam linetype ortho
 
 Person(storeCommunicationUser, "Medewerker winkelcommunicatie", "Verantwoordelijk voor relevante winkelcommunicatie")
 Person(businessUser, "Hoofdkantoormedewerker", "Heeft communicatiebehoefte naar de winkels", "users")

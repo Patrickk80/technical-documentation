@@ -1,0 +1,134 @@
+@startuml
+'skinparam dpi 300
+!define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
+!define primary_key(x) <b>x</b>
+!define unique(x) <i>x</i>
+!define not_null(x) <u>x</u>
+!define foreign_key(x) <color:green>x</color>
+' other tags available:
+' <i></i>
+' <back:COLOR></color>, where color is a color name or html color code
+' (#FFAACC)
+' see: http://plantuml.com/classes.html#More
+hide methods
+hide stereotypes
+hide circle
+skinparam linetype ortho
+
+'entities
+Table(message, "message\n(one particular message)") {
+    primary_key(id) INTEGER auto_increment
+    not_null(title) VARCHAR[75]
+    not_null(body) VARCHAR
+    not_null(publication_date) DATETIME
+    not_null(removal_date) DATETIME
+    Appendix VARCHAR[50]
+    status VARCHAR[10] default NEW
+    foreign_key(message_type_id): INTEGER
+    foreign_key(trustability_id): INTEGER
+    foreign_key(last modified) INTEGER\n\tpoints to change.id
+}
+
+Table(store, "store") {
+    primary_key(foreign_key(message_id)) INTEGER
+    primary_key(store_id) INTEGER
+    store_message_id INTEGER
+    not_null(status) VARCHAR[15] default NEW
+}
+
+Table(param, "param") {
+    primary_key(foreign_key(message_id)) INTEGER
+    primary_key(store_id) INTEGER
+    not_null(value) VARCHAR[50]
+}
+
+Table(change, "change"){
+    primary_key(id) INTEGER auto_increment
+    not_null(user_name) VARCHAR[20]
+    not_null(change_date) DATETIME
+    not_null(foreign_key(changetype_id)) INTEGER
+    foreign_key(unique(message_id)) INTEGER
+}
+
+Table(changetype, "changetype"){
+    primary_key(id) INTEGER auto_increment
+    unique(name) VARCHAR[15]
+}
+note right of changetype
+    Created
+    Changed
+    Published
+    Removed
+    Deleted
+end note
+
+Table(focus, "focus"){
+    primary_key(id) INTEGER auto_increment
+    unique(name) VARCHAR[15]
+}
+note bottom of focus
+ SP?
+end note
+
+Table(focus_area, "focus areas"){
+    primary_key(foreign_key(message_id)) INTEGER
+    primary_key(foreign_key(focus_id)) INTEGER
+}
+
+Table(message_type, "message type"){
+    primary_key(id) INTEGER auto_increment
+    unique(name) VARCHAR[15]
+}
+note bottom of message_type
+ Dagbericht
+ Weekbericht
+ Spoedbericht
+ Enquetebericht
+
+ SP?
+end note
+
+Table(trustability, "trustability"){
+    primary_key(id) INTEGER auto_increment
+    unique(name) VARCHAR[15]
+}
+note bottom of trustability
+ SP?
+end note
+
+Table(department, "department"){
+    primary_key(id) INTEGER auto_increment
+    unique(name) VARCHAR[15]
+}
+note bottom of department
+ SP?
+end note
+
+Table(message_department, "message-department"){
+    primary_key(foreign_key(message_id)) INTEGER
+    primary_key(foreign_key(department_id)) INTEGER
+}
+
+'relationships
+message "1" ||--o{ "0..n" store : "store\nselection"
+message "1" ||--o{ "0..n" param : "body\nvariables"
+message "1" }o--||"0..n" message_type : "message\ntype"
+message "0..n" ||--o{ "1" trustability : "trustability"
+message "0..n" ||--o{ "1" focus_area :"target\nfocus areas"
+focus_area "1" }o--|| "0..n" focus
+message "1" }o--|| "0..n" message_department : "targeted\ndepartments"
+message_department "1" }o--|| "0..n" department : ""
+change "1" ||--|| "1" message : "last\nmodified"
+message "1..n" ||--o{ "1" change : "change\nlog"
+change "1" }o--|| "0..n" changetype : "possible\nvalues"
+
+'layout
+message -up[hidden]-> change
+change -right[hidden]-> changetype
+legend
+    primary_key(Primary_key)
+    foreign_key(Foreign Key)
+    unique(unique)
+    not_null(not null)
+end legend
+@enduml
