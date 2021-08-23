@@ -1,0 +1,58 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+skinparam linetype ortho
+
+System_Boundary(client, "MDT-Client") {
+    Boundary(Platform, "10. Platform") {
+        Component(MDT.Platform.Blazor.Server, "MDT.Platform.Blazor.Server", "Console app", "Core Blazor WASM server application")
+        Component(MDT.Platform.Blazor.Client, "MDT.Platform.Blazor.Client", "Console app", "Core JAP client application")
+        Component(MDT.Platform.Blazor.Shared, "MDT.Platform.Blazor.Shared", "Class library", "Core JAP shared libraries")
+        Component_Ext(JAP.Platform.Blazor.Client.Shared, "JAP.Platform.Blazor.Client.Shared", "Class library", "JAP shared layout")
+    }
+
+    Boundary(Gateways, "20. Gateways"){
+        Component(JAP.Gateways.MDT.Module, "JAP.Gateways.MDT.Module", "Class library", "MDT front-end library")
+        Component_Ext(JAP.Gateways.Platform.Module, "JAP.Gateways.Platform.Module", "Class library", "JAP core front-end library")
+    }
+
+    Boundary(Services, "30. Services"){
+        Component_Ext(JAP.Services.Platform.Shared, "JAP.Services.Platform.Shared", "Class library", "JAP platform core services")
+    }
+
+    Boundary(CrossCutting, "60. Crosscutting"){
+        Component_Ext(JAP.Framework.Blazor, "JAP.Framework.Blazor", "Class library", "Blazor base library")
+        Component_Ext(JAP.Framework.Blazor.Telerik, "JAP.Framework.Blazor.Telerik", "Class library",  "Extended Telerik libraries")
+        Component_Ext(JAP.Framework.Blazor.Components, "JAP.Framework.Blazor.Components", "Class library", "Blazor component collection")
+        Component_Ext(JAP.Framework.Shared, "JAP.Framework.Shared", "Class library", "JAP Core shared entities")
+    }
+}
+
+Rel(MDT.Platform.Blazor.Server, MDT.Platform.Blazor.Client, "Starts")
+Rel(MDT.Platform.Blazor.Server, MDT.Platform.Blazor.Shared, "Depends on")
+
+Rel(MDT.Platform.Blazor.Client, JAP.Gateways.MDT.Module, "Depends on")
+Rel(MDT.Platform.Blazor.Client, JAP.Platform.Blazor.Client.Shared, "Depends on")
+Rel(MDT.Platform.Blazor.Client, MDT.Platform.Blazor.Shared, "Depends on")
+
+Rel(JAP.Gateways.MDT.Module, JAP.Framework.Blazor.Components, "Depends on")
+Rel(JAP.Gateways.MDT.Module, JAP.Framework.Blazor.Telerik, "Depends on")
+
+Rel(JAP.Platform.Blazor.Client.Shared, JAP.Gateways.Platform.Module, "Depends on")
+Rel(JAP.Platform.Blazor.Client.Shared, JAP.Framework.Blazor.Components, "Depends on")
+Rel(JAP.Platform.Blazor.Client.Shared, JAP.Framework.Blazor, "Depends on")
+
+Rel(JAP.Gateways.Platform.Module, JAP.Services.Platform.Shared, "Depends on")
+Rel(JAP.Gateways.Platform.Module, JAP.Framework.Blazor.Components, "Depends on")
+Rel(JAP.Gateways.Platform.Module, JAP.Framework.Blazor.Telerik, "Depends on")
+
+Rel(JAP.Framework.Blazor, JAP.Framework.Blazor.Components, "Depends on")
+Rel(JAP.Framework.Blazor, JAP.Framework.Shared, "Depends on")
+
+Rel(JAP.Framework.Blazor.Components, JAP.Framework.Shared, "Depends on")
+
+Rel(JAP.Framework.Blazor.Telerik, JAP.Framework.Blazor, "Depends on")
+
+Rel(JAP.Services.Platform.Shared, JAP.Framework.Shared, "Depends on")
+
+SHOW_DYNAMIC_LEGEND()
+@enduml

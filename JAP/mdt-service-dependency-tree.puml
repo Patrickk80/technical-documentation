@@ -1,0 +1,39 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+skinparam linetype ortho
+
+System_Boundary(service, "MDT-Service") {
+    Boundary(Services, "30. Services"){
+        Component(JAP.Service.MDT.ApiService, "JAP.Service.MDT.ApiService", "Console app", "MDT backend application")
+        Component(JAP.Services.MDT.Application, "JAP.Services.MDT.Application", "Class Library", "MDT backend services collection")
+        Component(JAP.Services.MDT.Core, "JAP.Services.MDT.Core", "Class Library", "MDT backend domain service")
+        Component(JAP.Services.MDT.Infrastructure, "JAP.Services.MDT.Infrastructure", "Class Library", "MDT backend database service")
+        Component(JAP.Services.MDT.Shared, "JAP.Services.MDT.Shared", "Class Library", "MDT backend inter-services connector")
+    }
+
+    Boundary(Crosscutting, "60. Crosscutting") {
+        Component_Ext(JAP.Framework, "JAP.Framework", "Class Library", "JAP Core backend application")
+        Component_Ext(JAP.Framework.Mvc, "JAP.Framework.Mvc", "Class Library", "JAP Core backend services")
+        Component_Ext(JAP.Framework.Shared, "JAP.Framework.Shared", "Class Library", "JAP Core backend domain")
+    }
+}
+
+Rel(JAP.Service.MDT.ApiService, JAP.Framework.Mvc, "Depends on")
+Rel(JAP.Service.MDT.ApiService, JAP.Services.MDT.Application, "Depends on")
+
+Rel(JAP.Services.MDT.Application, JAP.Services.MDT.Core, "Depends on")
+Rel(JAP.Services.MDT.Application, JAP.Services.MDT.Infrastructure, "Depends on")
+Rel(JAP.Services.MDT.Application, JAP.Services.MDT.Shared, "Depends on")
+
+Rel(JAP.Services.MDT.Core, JAP.Framework, "Depends on")
+
+Rel(JAP.Services.MDT.Infrastructure, JAP.Services.MDT.Core, "Depends on")
+
+Rel(JAP.Services.MDT.Shared, JAP.Framework.Shared, "Depends on")
+
+Rel(JAP.Framework, JAP.Framework.Shared, "Depends on")
+Rel(JAP.Framework.Mvc, JAP.Framework, "Depends on")
+Rel(JAP.Framework.Mvc, JAP.Framework.Shared, "Depends on")
+
+SHOW_DYNAMIC_LEGEND()
+@enduml

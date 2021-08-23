@@ -17,7 +17,8 @@ skinparam linetype ortho
 
 'entities
 Table(message, "message\n(one particular message)") {
-    primary_key(id) INTEGER auto_increment
+    primary_key(message_id) INTEGER auto_increment
+    not_null(subject) VARCHAR[75]
     not_null(title) VARCHAR[75]
     not_null(body) VARCHAR
     not_null(publication_date) DATETIME
@@ -29,16 +30,17 @@ Table(message, "message\n(one particular message)") {
     foreign_key(last modified) INTEGER\n\tpoints to change.id
 }
 
-Table(store, "store") {
+Table(result, "result") {
     primary_key(foreign_key(message_id)) INTEGER
     primary_key(store_id) INTEGER
     store_message_id INTEGER
     not_null(status) VARCHAR[15] default NEW
 }
 
-Table(param, "param") {
+Table(param, "value") {
     primary_key(foreign_key(message_id)) INTEGER
     primary_key(store_id) INTEGER
+    not_null(key) VARCHAR[50]
     not_null(value) VARCHAR[50]
 }
 
@@ -62,19 +64,6 @@ note right of changetype
     Deleted
 end note
 
-Table(focus, "focus"){
-    primary_key(id) INTEGER auto_increment
-    unique(name) VARCHAR[15]
-}
-note bottom of focus
- SP?
-end note
-
-Table(focus_area, "focus areas"){
-    primary_key(foreign_key(message_id)) INTEGER
-    primary_key(foreign_key(focus_id)) INTEGER
-}
-
 Table(message_type, "message type"){
     primary_key(id) INTEGER auto_increment
     unique(name) VARCHAR[15]
@@ -84,25 +73,17 @@ note bottom of message_type
  Weekbericht
  Spoedbericht
  Enquetebericht
-
- SP?
 end note
 
 Table(trustability, "trustability"){
     primary_key(id) INTEGER auto_increment
     unique(name) VARCHAR[15]
 }
-note bottom of trustability
- SP?
-end note
 
 Table(department, "department"){
     primary_key(id) INTEGER auto_increment
     unique(name) VARCHAR[15]
 }
-note bottom of department
- SP?
-end note
 
 Table(message_department, "message-department"){
     primary_key(foreign_key(message_id)) INTEGER
@@ -114,8 +95,6 @@ message "1" ||--o{ "0..n" store : "store\nselection"
 message "1" ||--o{ "0..n" param : "body\nvariables"
 message "1" }o--||"0..n" message_type : "message\ntype"
 message "0..n" ||--o{ "1" trustability : "trustability"
-message "0..n" ||--o{ "1" focus_area :"target\nfocus areas"
-focus_area "1" }o--|| "0..n" focus
 message "1" }o--|| "0..n" message_department : "targeted\ndepartments"
 message_department "1" }o--|| "0..n" department : ""
 change "1" ||--|| "1" message : "last\nmodified"

@@ -18,9 +18,8 @@ System_Boundary(communication, "Winkelcommunicatie") {
             Container(managementPage, "Winkelberichten beheer", "Beheerpagina voor het indienen van berichten")
         }
 
-        Boundary(azure, "Kubernetes", "Azure") {
+        Boundary(azure, "Azure", "Cloud") {
             Container(messageService, "Berichtenservice", "Verantwoordelijk voor het publiceren van winkelberichten")
-            Container(storeSelector, "Winkelselector", "Service die helpt bij het selecteren van een (collectie) winkel(s)")
         }
 
         Container_Ext(ad, "Active Directory", "Beheer van autorisaties")
@@ -36,12 +35,8 @@ System_Boundary(communication, "Winkelcommunicatie") {
 
 Lay_L(storeCommunicationUser, businessUser)
 
-Lay_D(sharePoint, azure)
-Lay_R(ad, storeSelector)
-
 Rel(businessUser, managementPage, "Dient generieke berichten in")
 Rel_D(storeCommunicationUser, managementPage, "Beoordeelt ingediende berichten")
-Lay_U(managementPage, storeCommunicationUser)
 
 Rel(storeCommunicationUser, mdt, "Creëert winkel specifieke berichten")
 Rel(mdt, MDTMessageService, "gebruikt", "soap")
@@ -52,8 +47,7 @@ Rel_L(storeUser, storePage, "ontvangt communicatie")
 Rel(messageService, managementPage, "Haalt berichten op die gepubliceert moeten worden")
 Rel(messageService, storePage, "Publiceert berichten op de betreffende pagina's")
 
-Rel(managementPage, storeSelector, "Gebruikt")
 Rel(sharePoint, ad, "Gebruikt")
-
+'LAYOUT_LEFT_RIGHT()
 SHOW_DYNAMIC_LEGEND()
 @enduml

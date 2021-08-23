@@ -1,0 +1,77 @@
+@startuml
+salt
+    {
+        Tab 1: Opvoeren bericht data
+        {+
+            {/ <b>Bericht | Data | Status  }
+            {#
+                .|*|*
+                Onderwerp |"Onderwerp"|600 winkels
+                .|*|*
+
+                Titel * | "Titel                                                       " | *75 tekens
+                Omschrijving * | {
+                    "Dit bericht is voor <i>winkel <U+007B><U+007B>winkelnaam<U+007D><U+007D>."
+                    "Je ontvangt je <b>vracht</b> op                                              "
+                    "<U+007B><U+007B>dag<U+007D><U+007D>                                   "
+                    "om <U+007B><U+007B>uur<U+007D><U+007D>                                "
+                    .
+                    .
+                    .
+                    .} | *
+                Berichttype             | ^Dagbericht                                   ^| *
+
+                .|*|*
+
+                Bestemd voor * | {
+                    [X] DKW | [X] Kassa
+                    [ ] AGF | [ ] Bloemen         } | *
+                Vertrouwelijkheid| ^Filiaalmanager/Plaatsvervanger               ^ | *
+
+                .|*|*
+
+               Bijlage | {  | "Locatie"| <&folder> | "<U+007B><U+007B>winkelnummer<U+007D><U+007D>-onderwerp.pdf" |*} |*
+
+               .|*|*
+
+                Publicatiedatum |  { "dd-mm-jjjj" | <&calendar> | "hh:mm" |<&clock> } |*
+                Verwijderdatum | { "dd-mm-jjjj" | <&calendar> } |*
+            }
+                            .|*|*
+
+            [  Opslaan  ]
+       }
+        .
+        .
+        .
+        Tab 2: Opvoeren berichtdetails
+        {+
+            {/ Bericht | <b>Data | Status  }
+            {#
+                .|*|*
+                <U+0020>Onderwerp<U+0020> | <U+0020>600 winkels<U+0020> |*
+                .|*|*
+                {S
+                    {#
+                        <U+0020>Winkelnummer<U+0020> | <U+0020>winkelnaam<U+0020> | <U+0020>dag<U+0020> | <U+0020>uur<U+0020>
+                        <U+0020>4615<U+0020> | <U+0020>Veghel de Bunders<U+0020> | <U+0020>1-1-2021<U+0020> | <U+0020>09:00 uur<U+0020>
+                        <U+0020>4859<U+0020> | <U+0020>Eindhoven Belgieplein<U+0020> | <U+0020>2-1-2021<U+0020> | <U+0020>10:00 uur<U+0020>
+                    }
+                } |
+                {
+                    <b>Voorbeeld:
+                    --
+                    .
+                    Dit bericht is voor winkel Veghel de Bunders.
+                    Je ontvangt je vracht op
+                    1-1-2021
+                    om 09:00 uur
+                }
+                 |*
+            }
+            .|*|*
+
+            [  Opslaan  ]
+       }
+    }
+@enduml
