@@ -70,7 +70,6 @@ Table(message_type, "message type"){
 }
 note bottom of message_type
  Dagbericht
- Weekbericht
  Spoedbericht
  Enquetebericht
 end note
@@ -100,7 +99,7 @@ message_department "1" }o--|| "0..n" department : ""
 change "1" ||--|| "1" message : "last\nmodified"
 message "1..n" ||--o{ "1" change : "change\nlog"
 change "1" }o--|| "0..n" changetype : "possible\nvalues"
-
+message "1" ||--o{ "0..n" result : "publish results"
 'layout
 message -up[hidden]-> change
 change -right[hidden]-> changetype
