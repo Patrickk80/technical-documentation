@@ -20,6 +20,7 @@ System_Boundary(communication, "Winkelcommunicatie") {
 
         Boundary(azure, "Azure", "Cloud") {
             Container_Ext(mdt, "MDT", "MDT microservice", $tags="target")
+            Container_Ext(mdtfe, "MDT FE", "MDT Blazor app", $tags="target")
             Container(messageService, "Berichtenservice", "Verantwoordelijk voor het publiceren van winkelberichten")
             Container(MDTMessageService, "MDT Berichtenservice", "Verantwoordelijk voor het publiceren van MDT winkelberichten")
         }
@@ -32,18 +33,19 @@ Lay_L(storeCommunicationUser, businessUser)
 
 'Lay_R(sharePoint, azure)
 
-Rel(businessUser, managementPage, "Dient generieke berichten in")
-Rel_D(storeCommunicationUser, managementPage, "Beoordeelt ingediende berichten")
+Rel(businessUser, managementPage, )
+Rel_D(storeCommunicationUser, managementPage,)
 
-Rel(storeCommunicationUser, mdt, "Creëert winkel specifieke berichten")
+Rel_L(storeCommunicationUser, mdt, "Creëert winkel specifieke berichten")
 Rel(mdt, MDTMessageService, "gebruikt")
 Rel(mdt, ad, "gebruikt")
-Rel(MDTMessageService, storePage, "Publiceert bericht op de betreffende pagina")
+Rel(mdtfe, mdt,"gebruikt")
+Rel(MDTMessageService, storePage, "Publiceert bericht")
 
-Rel(storeUser, storePage, "ontvangt communicatie")
+Rel(storeUser, storePage, )
 
-Rel(messageService, managementPage, "Haalt berichten op die gepubliceert moeten worden")
-Rel(messageService, storePage, "Publiceert berichten op de betreffende pagina's")
+Rel(messageService, managementPage, )
+Rel(messageService, storePage, )
 
 Rel(sharePoint, ad, "Gebruikt")
 

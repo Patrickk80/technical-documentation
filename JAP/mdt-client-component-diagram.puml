@@ -54,5 +54,6 @@ Rel(JAP.Framework.Blazor.Telerik, JAP.Framework.Blazor, "Depends on")
 
 Rel(JAP.Services.Platform.Shared, JAP.Framework.Shared, "Depends on")
 
+/'LAYOUT_LEFT_RIGHT()
 SHOW_DYNAMIC_LEGEND()
 @enduml

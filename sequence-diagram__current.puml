@@ -1,0 +1,46 @@
+@startuml
+skinparam ParticipantPadding 30
+skinparam BoxPadding 10
+skinparam SequenceGroupBodyBackGroundColor transparent
+
+header Sequence diagram huidige situatie
+
+
+actor Medewerker as employee
+box Excel app
+    participant MDT as mdt
+end box
+
+box backend services
+    participant "MDT berichtenservice" as service
+end box
+
+participant Sharepoint as sharepoint
+
+activate employee
+employee -> mdt ++ : Start publicatie
+    loop n berichten
+        |||
+        mdt -> mdt : Aanmaken request
+        loop Retry maximaal drie keer indien publicatiefout
+            |||
+            mdt -> service ++ : SOAP request
+            service -> sharepoint ++ : Publiceer winkeldashboard
+            note over mdt, sharepoint : Doorlooptijd per bericht +/- 20 sec
+            sharepoint --> service -- : BerichtID
+            note right: Negatief berichtID\n=\npublicatiefout
+            alt #LightGreen Wanneer succesvol
+                service --> mdt : Bericht ID
+                |||
+            else #Pink Publicatiefout
+                service --> mdt : Error ID
+                |||
+            end
+            mdt -> mdt : Toon ID op sheet
+            deactivate service
+            |||
+        end
+    end
+    mdt -> employee -- : Resultaat
+deactivate employee
+@enduml

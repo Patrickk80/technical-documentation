@@ -1,0 +1,55 @@
+@startuml
+skinparam ParticipantPadding 10
+skinparam BoxPadding 10
+skinparam SequenceGroupBodyBackGroundColor transparent
+
+header Sequence diagram gewenste situatie
+
+actor Medewerker as employee
+box "C# app"
+    participant "MDT Blazor" as blazor
+    participant "MDT service" as mdt
+end box
+
+box Azure services
+    participant "Azure\nService Bus" as bus
+    participant "Azure\nFunction" as function
+end box
+
+participant Sharepoint as sharepoint
+
+employee -> blazor : Start publicatie
+blazor -> mdt ++ : Verwerk berichten
+
+    loop n berichten
+        |||
+        mdt -> bus : Bericht
+        |||
+    end
+deactivate mdt
+|||
+loop Voor ieder bericht in queue
+    note over bus, sharepoint : Asynchrone verwerking op de achtergrond\nGebruiker niet langer geblokkeerd
+    bus -> function **
+    activate function
+        function -> sharepoint ++ : Publiceer winkeldashboard
+        sharepoint --> function -- : BerichtID
+        note left: Negatief berichtID\n=\npublicatiefout
+    activate mdt
+        function -> mdt : Pulicatieresultaat
+        mdt -> mdt : Opslaan resultaat
+    deactivate mdt
+
+function --> function !!
+|||
+end
+
+== Gebruiker kan ondertussen doorwerken en de status opvragen ==
+
+employee -> blazor : Opvragen status
+blazor -> mdt ++: Request bericht status
+|||
+mdt --> blazor --
+blazor --> employee
+|||
+@endum
